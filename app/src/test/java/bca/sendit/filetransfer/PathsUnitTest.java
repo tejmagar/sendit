@@ -7,10 +7,9 @@ import static org.junit.Assert.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import bca.sendit.filetransfer.paths.Path;
-import bca.sendit.filetransfer.paths.PathMatcher;
+import bca.sendit.filetransfer.server.paths.Path;
+import bca.sendit.filetransfer.server.paths.PathMatcher;
 import bca.sendit.filetransfer.server.Utils;
-import bca.sendit.filetransfer.views.ListFilesApiView;
 
 public class PathsUnitTest {
 

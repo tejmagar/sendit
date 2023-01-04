@@ -8,8 +8,9 @@ import android.util.Log;
 import java.io.IOException;
 import java.io.InputStream;
 
-import bca.sendit.filetransfer.paths.PathMatcher;
-import bca.sendit.filetransfer.paths.ResponseView;
+import bca.sendit.filetransfer.server.auths.Auths;
+import bca.sendit.filetransfer.server.paths.PathMatcher;
+import bca.sendit.filetransfer.server.paths.ResponseView;
 import fi.iki.elonen.NanoHTTPD;
 
 public class HttpServer extends NanoHTTPD {
@@ -18,15 +19,31 @@ public class HttpServer extends NanoHTTPD {
 
     private final Context context;
     private final PathMatcher pathMatcher;
+    private final Configuration configuration;
 
-    public HttpServer(Context context, int port, PathMatcher pathMatcher) {
+    public HttpServer(Context context, Configuration configuration, PathMatcher pathMatcher, int port) {
         super(port);
+        this.configuration = configuration;
         this.context = context;
         this.pathMatcher = pathMatcher;
     }
 
     public void start() throws IOException {
         start(NanoHTTPD.SOCKET_READ_TIMEOUT, false);
+    }
+
+    /**
+     * Prepare request object with necessary information for passing to class extending ResponseView
+     * @param session IHTTPSession
+     * @param authToken authToken
+     * @return request
+     */
+    private Request getRequest(IHTTPSession session, String authToken) {
+        Request request = new Request();
+        request.setSession(session);
+        request.setAuthenticated(Auths.isAuthenticated(context, authToken));
+        request.setConfiguration(configuration);
+        return request;
     }
 
     /**
@@ -54,7 +71,7 @@ public class HttpServer extends NanoHTTPD {
                 return newChunkedResponse(Status.OK, mimeType, inputStream);
             }
 
-            // Handle API responses
+            // Handle Views response
             ResponseView responseView = pathMatcher.getMatchedView(session);
 
             if (responseView == null) {
@@ -63,7 +80,18 @@ public class HttpServer extends NanoHTTPD {
                         "404 Error: File not found");
             }
 
-            return responseView.getResponse(context, session);
+            CookieHandler cookieHandler = new CookieHandler(session.getHeaders());
+            String authToken = cookieHandler.read("Authorization: Token");
+            Response response = responseView.getResponse(context, getRequest(session, authToken));
+
+            if (authToken == null) {
+                // Looks like device is requesting for the first time or cookie has been cleared
+                cookieHandler.set("Authorization: Token", Auths.generateToken(), 7 * 86400);
+                cookieHandler.unloadQueue(response);
+            }
+
+            return response;
+
         } catch (Exception e) {
             e.printStackTrace();
 

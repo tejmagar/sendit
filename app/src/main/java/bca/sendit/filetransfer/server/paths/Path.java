@@ -1,4 +1,4 @@
-package bca.sendit.filetransfer.paths;
+package bca.sendit.filetransfer.server.paths;
 
 public class Path {
     private final String path;

@@ -10,16 +10,16 @@ public class AssetsHandler {
     /**
      * Returns input stream of file if found in project assets directory.
      * It will return null if exception is occurred.
+     *
      * @param context context
-     * @param path filepath
+     * @param path    filepath
      * @return inputStream
      */
     public static InputStream getInputStream(Context context, String path) {
 
         try {
             return context.getAssets().open(path);
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ignore) {
         }
 
         return null;
