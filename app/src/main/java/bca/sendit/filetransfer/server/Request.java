@@ -3,9 +3,18 @@ package bca.sendit.filetransfer.server;
 import fi.iki.elonen.NanoHTTPD;
 
 public class Request {
+    private String authToken;
     private boolean isAuthenticated = false;
     private NanoHTTPD.IHTTPSession session;
     private Configuration configuration;
+
+    public void setAuthToken(String authToken) {
+        this.authToken = authToken;
+    }
+
+    public String getAuthToken() {
+        return authToken;
+    }
 
     public boolean isAuthenticated() {
         return isAuthenticated;

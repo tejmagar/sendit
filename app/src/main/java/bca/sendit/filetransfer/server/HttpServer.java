@@ -3,6 +3,7 @@ package bca.sendit.filetransfer.server;
 import static fi.iki.elonen.NanoHTTPD.Response.Status;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 
 import java.io.IOException;
@@ -34,17 +35,23 @@ public class HttpServer extends NanoHTTPD {
 
     /**
      * Prepare request object with necessary information for passing to class extending ResponseView
-     * @param session IHTTPSession
+     *
+     * @param session   IHTTPSession
      * @param authToken authToken
      * @return request
      */
     private Request getRequest(IHTTPSession session, String authToken) {
         Request request = new Request();
+        if (authToken == null) {
+            authToken = Auths.generateToken();
+        }
+        request.setAuthToken(authToken);
         request.setSession(session);
         request.setAuthenticated(Auths.isAuthenticated(context, authToken));
         request.setConfiguration(configuration);
         return request;
     }
+
 
     /**
      * Responsible for handling request
@@ -82,11 +89,12 @@ public class HttpServer extends NanoHTTPD {
 
             CookieHandler cookieHandler = new CookieHandler(session.getHeaders());
             String authToken = cookieHandler.read("Authorization: Token");
-            Response response = responseView.getResponse(context, getRequest(session, authToken));
+            Request request = getRequest(session, authToken);
+            Response response = responseView.getResponse(context, request);
 
             if (authToken == null) {
                 // Looks like device is requesting for the first time or cookie has been cleared
-                cookieHandler.set("Authorization: Token", Auths.generateToken(), 7 * 86400);
+                cookieHandler.set("Authorization: Token", request.getAuthToken(), 7 * 86400);
                 cookieHandler.unloadQueue(response);
             }
 

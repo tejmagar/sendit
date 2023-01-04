@@ -4,7 +4,7 @@ import android.content.Context;
 
 import androidx.room.Room;
 
-public class Db {
+public class DbManager {
     private static AppDatabase appDatabase;
 
     public static AppDatabase get(Context context) {

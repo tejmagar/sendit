@@ -4,7 +4,7 @@ import android.content.Context;
 
 import java.util.UUID;
 
-import bca.sendit.filetransfer.Db;
+import bca.sendit.filetransfer.DbManager;
 
 public class Auths {
     /**
@@ -27,7 +27,7 @@ public class Auths {
                 return;
             }
 
-            Db.get(context).authsTokenDao().addToken(authToken);
+            DbManager.get(context).authsTokenDao().addToken(authToken);
         }).start();
     }
 
@@ -38,7 +38,7 @@ public class Auths {
      * @return AuthToken
      */
     public static AuthToken getToken(Context context, String token) {
-        return Db.get(context).authsTokenDao().getToken(token, true);
+        return DbManager.get(context).authsTokenDao().getToken(token, true);
     }
 
     /**
@@ -47,7 +47,7 @@ public class Auths {
      * @param authToken AuthToken
      */
     public static void deleteToken(Context context, AuthToken authToken) {
-        new Thread(() -> Db.get(context).authsTokenDao().deleteToken(authToken)).start();
+        new Thread(() -> DbManager.get(context).authsTokenDao().deleteToken(authToken)).start();
     }
 
 
