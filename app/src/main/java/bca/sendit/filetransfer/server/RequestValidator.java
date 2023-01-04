@@ -14,8 +14,8 @@ public class RequestValidator {
     private final Context context;
     private final Request request;
     private boolean shouldAuthenticated = false;
-    private boolean checkReadPermission = false;
-    private boolean isPrivateMode = false;
+    private boolean shouldReadPermission = false;
+    private boolean shouldPrivateMode = false;
 
     private String errorMessage = null;
 
@@ -28,12 +28,12 @@ public class RequestValidator {
         this.shouldAuthenticated = shouldAuthenticated;
     }
 
-    public void setCheckReadPermission(boolean checkReadPermission) {
-        this.checkReadPermission = checkReadPermission;
+    public void setShouldReadPermission(boolean shouldReadPermission) {
+        this.shouldReadPermission = shouldReadPermission;
     }
 
     public void setShouldPrivateMode(boolean privateMode) {
-        isPrivateMode = privateMode;
+        shouldPrivateMode = privateMode;
     }
 
     public boolean isValid() {
@@ -41,12 +41,12 @@ public class RequestValidator {
             errorMessage = "Not authenticated";
         }
 
-        if (checkReadPermission && ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
+        if (shouldReadPermission && ActivityCompat.checkSelfPermission(context,
+                Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             errorMessage = "File read permission not granted";
         }
 
-        if (isPrivateMode && request.getConfiguration().isPrivateMode) {
+        if (shouldPrivateMode && request.getConfiguration().isPrivateMode) {
             errorMessage = "Cannot access in private mode";
         }
 

@@ -41,7 +41,7 @@ public class VideosApiView extends ResponseView {
         RequestValidator requestValidator = new RequestValidator(context, request);
         requestValidator.setShouldAuthenticated(true);
         requestValidator.setShouldPrivateMode(true);
-        requestValidator.setCheckReadPermission(true);
+        requestValidator.setShouldReadPermission(true);
 
         if (requestValidator.isValid()) {
             JSONArray jsonArray = new JSONArray();
