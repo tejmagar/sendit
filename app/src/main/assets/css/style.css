@@ -1,0 +1,169 @@
+@import url('https://fonts.googleapis.com/css2?family=Secular+One&display=swap');
+#header {
+    grid-area: header;
+    display: flex;
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+*{
+    margin: 0;
+    box-sizing: border-box;
+}
+#sidebar {
+    grid-area: sidebar;
+}
+
+#main {
+    grid-area: main;
+    padding: 16px;
+}
+
+#container {
+    height: 100vh;
+    display: grid;
+    grid-template-areas:
+        "header header"
+        "sidebar main";
+    grid-template-rows: auto 1fr;
+    grid-template-columns: auto 1fr;
+}
+
+
+body{
+    font-family: 'Secular One', sans-serif;
+    margin: 36px 100px;
+    padding: 0;
+}
+.logo{
+    font-size: 24px;
+    font-weight: 500;
+}
+nav{
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+.nav-buttons{
+    display: flex;
+    align-items: center;
+}
+.upload-btn{
+    display: flex;
+    align-items: center;
+}
+.search-bar{
+    display: flex;
+    align-items: center;
+}
+.search-bar input{
+    width: 300px;
+    height: 32px;
+    border-radius: 14px;
+    outline: none;
+    border: none;
+    background: #87CEEB;
+    margin-left: 35px;
+}
+
+.search-bar input::placeholder{
+    color: white;
+    text-align: center;
+}
+.search-bar input:focus{
+    color: white;
+    text-align: center;
+}
+
+/* Menu grid */
+.home {
+    grid-area: home;
+}
+.photos {
+    grid-area: photos;
+}
+.videos {
+    grid-area: videos;
+}
+.files {
+    grid-area: files;
+}
+.upload {
+    grid-area: upload;
+}
+.menu-grid{
+    display: grid;
+    grid-template-areas:
+        "home"
+        "photos"
+        "videos"
+        "files"
+        "upload";
+    background-color: #B3E9FF;
+    margin-top: 60px;
+    border-radius: 14px;
+    padding: 8px 8px;
+}
+
+
+
+
+@media screen and (max-width: 720px) {
+    #header{
+       margin: 0 5px;
+    }
+    .circle{
+        width: 40px;
+        height: 40px;
+        border-radius: 100%;
+        background-color: #87CEEB;
+        border: none;
+    }
+    body{
+        margin: 0;
+        padding: 0;
+    }
+    .search-bar{
+        width: 100%;
+        justify-content: space-between;
+        margin: 8px;
+    }
+    #container {
+        grid-template-areas:
+            "header"
+            "main"
+            "sidebar";
+        grid-template-columns: 1fr;
+    }
+    .logo{
+        display: none;
+    }
+
+    .search-bar{
+        max-width: 90%;
+    }
+
+    .search-bar input {
+        max-width: 80%;
+    }
+    #sidebar {
+        margin: 0 auto ;
+    }
+
+
+    .menu-grid > a {
+        display: inline-block;
+        height: 36px;
+        margin: 6px;
+        cursor: pointer;
+    }
+
+
+.menu-grid{
+    width: max-content;
+    grid-template-areas: "home photos videos files upload";
+    padding: 3px;
+    margin-top: 0;
+    margin-bottom: 16px;
+}
+
+}
