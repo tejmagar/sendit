@@ -4,7 +4,6 @@ package bca.sendit.filetransfer.server;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.util.Log;
 
 import androidx.core.app.ActivityCompat;
 
@@ -38,8 +37,8 @@ public class RequestValidator {
     }
 
     public boolean isValid() {
-        if (shouldAuthenticated == !request.isAuthenticated()) {
-            errorMessage = "Not authenticated";
+        if (shouldPrivateMode != request.getConfiguration().isPrivateMode) {
+            errorMessage = "Cannot access in private mode";
         }
 
         if (shouldReadPermission && ActivityCompat.checkSelfPermission(context,
@@ -47,11 +46,10 @@ public class RequestValidator {
             errorMessage = "File read permission not granted";
         }
 
-        if (shouldPrivateMode != request.getConfiguration().isPrivateMode) {
-            errorMessage = "Cannot access in private mode";
+        if (shouldAuthenticated == !request.isAuthenticated()) {
+            errorMessage = "Not authenticated";
         }
-
-       return errorMessage == null;
+        return errorMessage == null;
     }
 
     public String getErrorMessage() {
