@@ -3,7 +3,6 @@ package bca.sendit.filetransfer;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.lifecycle.Observer;
 
 import android.Manifest;
 import android.content.BroadcastReceiver;
@@ -48,21 +47,17 @@ public class MainActivity extends AppCompatActivity {
         PathMatcher pathMatcher = new PathMatcher(paths);
         try {
             Configuration configuration = new Configuration();
-            configuration.isPrivateMode = false;
+            configuration.isPrivateMode = true;
             HttpServer httpServer = new HttpServer(this, configuration, pathMatcher, 8080);
             httpServer.start();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        DbManager.get(this).authsTokenDao().getTokens().observe(this, new Observer<List<AuthToken>>() {
-            @Override
-            public void onChanged(List<AuthToken> authTokens) {
-//                for (AuthToken authToken : authTokens) {
-//                    Toast.makeText(MainActivity.this, authToken.token, Toast.LENGTH_SHORT).show();
-//                }
-            }
+        DbManager.get(this).authsTokenDao().getTokens().observe(this, authTokens -> {
+
         });
+
         ActivityCompat.requestPermissions(this, new String[]{
                 Manifest.permission.READ_EXTERNAL_STORAGE
         }, 0);
@@ -84,7 +79,6 @@ public class MainActivity extends AppCompatActivity {
         requestDialogBuilder.setTitle(ipAddress + " is requesting...");
         requestDialogBuilder.setMessage("Allow this device to access your shared file?\nID: " + token);
         requestDialogBuilder.setNegativeButton("Don't Allow", (dialogInterface, i) -> dialogInterface.dismiss());
-
         requestDialogBuilder.setPositiveButton("Allow Access", (dialogInterface, i) ->
                 new Thread(() -> {
                     AuthToken authToken = new AuthToken(token, true);

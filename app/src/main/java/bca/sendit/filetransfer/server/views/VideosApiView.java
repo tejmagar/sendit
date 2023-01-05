@@ -40,7 +40,7 @@ public class VideosApiView extends ResponseView {
     public NanoHTTPD.Response getResponse(Context context, Request request) {
         RequestValidator requestValidator = new RequestValidator(context, request);
         requestValidator.setShouldAuthenticated(true);
-        requestValidator.setShouldPrivateMode(true);
+        requestValidator.setShouldPrivateMode(false);
         requestValidator.setShouldReadPermission(true);
 
         if (requestValidator.isValid()) {
