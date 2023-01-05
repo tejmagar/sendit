@@ -3,7 +3,6 @@ package bca.sendit.filetransfer.server;
 import static fi.iki.elonen.NanoHTTPD.Response.Status;
 
 import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
 
 import java.io.IOException;
@@ -83,8 +82,8 @@ public class HttpServer extends NanoHTTPD {
 
             if (responseView == null) {
                 // No response view found to handle request, probably because no path was matched
-                return NanoHTTPD.newFixedLengthResponse(Status.NOT_FOUND, "text/html",
-                        "404 Error: File not found");
+                return NanoHTTPD.newChunkedResponse(Status.NOT_FOUND,
+                        "text/html", AssetsHandler.getInputStream(context, "404.html"));
             }
 
             CookieHandler cookieHandler = new CookieHandler(session.getHeaders());
@@ -104,8 +103,8 @@ public class HttpServer extends NanoHTTPD {
             e.printStackTrace();
 
             // Handle if server crashed while processing
-            return NanoHTTPD.newFixedLengthResponse(Status.INTERNAL_ERROR, "text/html",
-                    "500 Error: Internal server error");
+            return NanoHTTPD.newChunkedResponse(Status.NOT_FOUND,
+                    "text/html", AssetsHandler.getInputStream(context, "500.html"));
         }
     }
 }

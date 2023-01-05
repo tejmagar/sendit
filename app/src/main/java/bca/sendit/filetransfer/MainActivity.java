@@ -97,9 +97,9 @@ public class MainActivity extends AppCompatActivity {
         authsDeviceView.setAdapter(devicesAdapter);
 
         DbManager.get(this).authsTokenDao().getTokens().observe(this, authTokens -> {
-            authTokenList.clear();
-            authTokenList.addAll(authTokens);
-            devicesAdapter.notifyDataSetChanged();
+//            authTokenList.clear();
+//            authTokenList.addAll(authTokens);
+//            devicesAdapter.notifyDataSetChanged();
         });
     }
 

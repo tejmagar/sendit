@@ -4,13 +4,17 @@ import android.content.Context;
 
 import androidx.room.Room;
 
+/**
+ * Use this class for accessing database access object
+ */
 public class DbManager {
     private static AppDatabase appDatabase;
 
     public static AppDatabase get(Context context) {
         // Make sure single app AppDatabase is instance is made
         if (appDatabase == null) {
-            appDatabase = Room.databaseBuilder(context, AppDatabase.class, context.getString(R.string.app_name)).build();
+            appDatabase = Room.databaseBuilder(context, AppDatabase.class,
+                    context.getString(R.string.app_name)).build();
         }
 
         return appDatabase;

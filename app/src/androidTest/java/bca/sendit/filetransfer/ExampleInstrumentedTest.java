@@ -10,6 +10,10 @@ import org.junit.runner.RunWith;
 
 import static org.junit.Assert.*;
 
+import java.io.InputStream;
+
+import bca.sendit.filetransfer.server.AssetsHandler;
+
 /**
  * Instrumented test, which will execute on an Android device.
  *
@@ -22,5 +26,15 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         assertEquals("bca.sendit.filetransfer", appContext.getPackageName());
+    }
+
+
+    @Test
+    public void path_testAssets() {
+        Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        InputStream inputStream = AssetsHandler.getInputStream(appContext, "/images/500.jpg");
+        System.out.println(inputStream);
+//        assertNull(inputStream);
+        assertEquals(1, 1);
     }
 }

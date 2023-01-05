@@ -4,12 +4,16 @@ import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+import android.app.Instrumentation;
+
 import java.util.ArrayList;
 import java.util.List;
 
+import bca.sendit.filetransfer.server.AssetsHandler;
 import bca.sendit.filetransfer.server.paths.Path;
 import bca.sendit.filetransfer.server.paths.PathMatcher;
 import bca.sendit.filetransfer.server.Utils;
+import bca.sendit.filetransfer.server.views.PhotosApiView;
 
 public class PathsUnitTest {
 
@@ -19,7 +23,7 @@ public class PathsUnitTest {
 
     @Before
     public void setUp() {
-        listPhotosPath = new Path("/api/list-photos/", new ListFilesApiView());
+        listPhotosPath = new Path("/api/list-photos/", new PhotosApiView());
         pathList.add(listPhotosPath);
         pathMatcher = new PathMatcher(pathList);
     }
@@ -41,4 +45,5 @@ public class PathsUnitTest {
         String mimeType = Utils.getMimeType("scripts.js");
         assertEquals("application-text/js", mimeType);
     }
+
 }

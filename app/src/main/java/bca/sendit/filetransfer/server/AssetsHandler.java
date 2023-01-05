@@ -16,6 +16,8 @@ public class AssetsHandler {
      * @return inputStream
      */
     public static InputStream getInputStream(Context context, String path) {
+        // Make absolute path to relative path. Example: "/images/404.jpg" to "images/404.jpg"
+        path = path.replaceFirst("/", "");
 
         try {
             return context.getAssets().open(path);
