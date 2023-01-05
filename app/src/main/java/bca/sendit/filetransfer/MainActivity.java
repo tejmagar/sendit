@@ -3,13 +3,18 @@ package bca.sendit.filetransfer;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.widget.Toast;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -18,6 +23,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import bca.sendit.filetransfer.adapters.DevicesAdapter;
 import bca.sendit.filetransfer.server.Configuration;
 import bca.sendit.filetransfer.server.Events;
 import bca.sendit.filetransfer.server.auths.AuthToken;
@@ -36,7 +42,23 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        App.setToolbarTransparent(this, getSupportActionBar());
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+        // For now set false to ignore onboard
+        boolean isFirstLaunch = sharedPreferences.getBoolean("first_launch", false);
+
+        if (isFirstLaunch) {
+            startActivity(new Intent(this, OnBoardActivity.class));
+            finish();
+            return;
+        }
+
+
         setContentView(R.layout.activity_main);
+
+        watchAuthDevices();
 
         List<Path> paths = new ArrayList<>();
         paths.add(new Path("/", new HomeView()));
@@ -54,20 +76,33 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        DbManager.get(this).authsTokenDao().getTokens().observe(this, authTokens -> {
-
-        });
 
         ActivityCompat.requestPermissions(this, new String[]{
                 Manifest.permission.READ_EXTERNAL_STORAGE
         }, 0);
-
 
         ServerEventsReceiver serverEventsReceiver = new ServerEventsReceiver();
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(Events.ACTION_REQUEST_ALLOW);
         registerReceiver(serverEventsReceiver, intentFilter);
     }
+
+    @SuppressLint("NotifyDataSetChanged")
+    private void watchAuthDevices() {
+        // Prepare recycler view
+        List<AuthToken> authTokenList = new ArrayList<>();
+        RecyclerView authsDeviceView = findViewById(R.id.auths_device_recycler_view);
+        authsDeviceView.setLayoutManager(new LinearLayoutManager(this));
+        DevicesAdapter devicesAdapter = new DevicesAdapter(this, authTokenList);
+        authsDeviceView.setAdapter(devicesAdapter);
+
+        DbManager.get(this).authsTokenDao().getTokens().observe(this, authTokens -> {
+            authTokenList.clear();
+            authTokenList.addAll(authTokens);
+            devicesAdapter.notifyDataSetChanged();
+        });
+    }
+
 
     private void requestDialog(String ipAddress, String token) {
         // If any previous request dialog exist, cancel it
@@ -78,8 +113,8 @@ public class MainActivity extends AppCompatActivity {
         MaterialAlertDialogBuilder requestDialogBuilder = new MaterialAlertDialogBuilder(MainActivity.this);
         requestDialogBuilder.setTitle(ipAddress + " is requesting...");
         requestDialogBuilder.setMessage("Allow this device to access your shared file?\nID: " + token);
-        requestDialogBuilder.setNegativeButton("Don't Allow", (dialogInterface, i) -> dialogInterface.dismiss());
-        requestDialogBuilder.setPositiveButton("Allow Access", (dialogInterface, i) ->
+        requestDialogBuilder.setNegativeButton("Deny", (dialogInterface, i) -> dialogInterface.dismiss());
+        requestDialogBuilder.setPositiveButton("Allow", (dialogInterface, i) ->
                 new Thread(() -> {
                     AuthToken authToken = new AuthToken(token, true);
                     Auths.saveToken(MainActivity.this, authToken);

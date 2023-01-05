@@ -28,6 +28,12 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
+
+        <activity
+            android:label="Getting Started"
+            android:theme="@style/Theme.SendIt.NoActionBar"
+            android:name=".OnBoardActivity"/>
+
     </application>
 
 </manifest>
