@@ -11,11 +11,11 @@ import androidx.fragment.app.Fragment;
 
 import bca.sendit.filetransfer.R;
 
-public class HomeFragment extends Fragment {
+public class SettingsFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = LayoutInflater.from(getContext()).inflate(R.layout.fragment_home, container, false);
-        return view;
+        return super.onCreateView(inflater, container, savedInstanceState);
     }
 }

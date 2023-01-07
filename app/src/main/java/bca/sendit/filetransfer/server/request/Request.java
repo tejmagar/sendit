@@ -1,7 +1,8 @@
-package bca.sendit.filetransfer.server;
+package bca.sendit.filetransfer.server.request;
 
 import android.content.Context;
 
+import bca.sendit.filetransfer.server.Configuration;
 import bca.sendit.filetransfer.server.auths.Auths;
 import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.NanoHTTPD.CookieHandler;

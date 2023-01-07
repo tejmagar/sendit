@@ -9,8 +9,8 @@ import org.json.JSONArray;
 import java.util.ArrayList;
 import java.util.List;
 
-import bca.sendit.filetransfer.server.Request;
-import bca.sendit.filetransfer.server.RequestValidator;
+import bca.sendit.filetransfer.server.request.Request;
+import bca.sendit.filetransfer.server.request.RequestValidator;
 import bca.sendit.filetransfer.server.paths.ResponseView;
 import fi.iki.elonen.NanoHTTPD;
 

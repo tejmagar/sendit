@@ -8,23 +8,23 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import java.util.List;
 
-public class OnBoardPagerAdapter extends FragmentStateAdapter {
-    private final List<Fragment> onBoardPages;
+public class ViewPagerAdapter extends FragmentStateAdapter {
+    private final List<Fragment> pages;
 
-    public OnBoardPagerAdapter(List<Fragment> onBoardPages, @NonNull FragmentManager fragmentManager,
-                               @NonNull Lifecycle lifecycle) {
+    public ViewPagerAdapter(List<Fragment> pages, @NonNull FragmentManager fragmentManager,
+                            @NonNull Lifecycle lifecycle) {
         super(fragmentManager, lifecycle);
-        this.onBoardPages = onBoardPages;
+        this.pages = pages;
     }
 
     @NonNull
     @Override
     public Fragment createFragment(int position) {
-        return onBoardPages.get(position);
+        return pages.get(position);
     }
 
     @Override
     public int getItemCount() {
-        return onBoardPages.size();
+        return pages.size();
     }
 }

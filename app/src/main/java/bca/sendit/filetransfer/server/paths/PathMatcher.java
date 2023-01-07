@@ -25,8 +25,12 @@ public class PathMatcher {
     public Path getMatchedPath(String currentPath) {
         for (Path path : paths) {
 
+            if (currentPath.startsWith(path.getPath()) && path.isMatchStart()) {
+                return path;
+            }
+
             // Check for exact match
-            if (path.getPath().equals(currentPath) && path.isMatchExact()) {
+            if (path.getPath().equals(currentPath)) {
                 return path;
             }
         }

@@ -1,7 +1,9 @@
 package bca.sendit.filetransfer;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.Button;
 
@@ -13,9 +15,9 @@ import androidx.viewpager2.widget.ViewPager2;
 import java.util.ArrayList;
 import java.util.List;
 
-import bca.sendit.filetransfer.adapters.OnBoardPagerAdapter;
-import bca.sendit.filetransfer.onboard.NextPageFragment;
-import bca.sendit.filetransfer.onboard.WelcomePageFragment;
+import bca.sendit.filetransfer.adapters.ViewPagerAdapter;
+import bca.sendit.filetransfer.ui.onboard.NextPageFragment;
+import bca.sendit.filetransfer.ui.onboard.WelcomePageFragment;
 
 public class OnBoardActivity extends AppCompatActivity {
     @Override
@@ -24,7 +26,7 @@ public class OnBoardActivity extends AppCompatActivity {
         setContentView(R.layout.activity_onboard);
 
         Button skipBtn = findViewById(R.id.onboard_skip);
-        skipBtn.setOnClickListener(v -> intentMain());
+        skipBtn.setOnClickListener(v -> completeOnBoard());
 
         Button backBtn = findViewById(R.id.onboard_back);
         backBtn.setVisibility(View.GONE);
@@ -35,7 +37,7 @@ public class OnBoardActivity extends AppCompatActivity {
         fragments.add(new NextPageFragment());
 
         ViewPager2 onBoardPager = findViewById(R.id.onboard_view_pager);
-        OnBoardPagerAdapter pagerAdapter = new OnBoardPagerAdapter(fragments,
+        ViewPagerAdapter pagerAdapter = new ViewPagerAdapter(fragments,
                 getSupportFragmentManager(), getLifecycle());
         onBoardPager.setAdapter(pagerAdapter);
 
@@ -66,7 +68,11 @@ public class OnBoardActivity extends AppCompatActivity {
 
     }
 
-    private void intentMain() {
+    private void completeOnBoard() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+        // Disables onboard next time in MainActivity
+        sharedPreferences.edit().putBoolean("first_launch", false).apply();
         startActivity(new Intent(this, MainActivity.class));
         finish();
     }

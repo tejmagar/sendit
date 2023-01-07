@@ -2,7 +2,7 @@ package bca.sendit.filetransfer.server.paths;
 
 import android.content.Context;
 
-import bca.sendit.filetransfer.server.Request;
+import bca.sendit.filetransfer.server.request.Request;
 import fi.iki.elonen.NanoHTTPD;
 
 public abstract class ResponseView {

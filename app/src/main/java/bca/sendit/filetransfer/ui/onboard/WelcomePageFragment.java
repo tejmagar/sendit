@@ -1,4 +1,4 @@
-package bca.sendit.filetransfer.onboard;
+package bca.sendit.filetransfer.ui.onboard;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

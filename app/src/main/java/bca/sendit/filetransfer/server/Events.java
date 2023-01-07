@@ -3,14 +3,20 @@ package bca.sendit.filetransfer.server;
 import android.content.Context;
 import android.content.Intent;
 
+import bca.sendit.filetransfer.server.request.Request;
+
 public class Events {
 
-    public final static String ACTION_REQUEST_ALLOW = "action_request_allow";
-    public final static String AUTH_TOKEN = "auth_token";
-    public final static String REMOTE_IP_ADDRESS = "remote_ip_address";
+    public static final String ACTION_REQUEST_ALLOW = "action_request_allow";
+    public static final String ACTION_REQUEST_RESULT = "action_request_result";
+    public static final String AUTH_TOKEN = "auth_token";
+    public static final String REMOTE_IP_ADDRESS = "remote_ip_address";
+    public static final String REQUEST_RESULT = "request_result";
+
 
     /**
      * Send broadcast event to activity to request access resources permission
+     *
      * @param request Request
      */
     public static void broadcastAccessRequest(Context context, Request request) {

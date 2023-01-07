@@ -3,12 +3,11 @@ package bca.sendit.filetransfer.server.views;
 import static fi.iki.elonen.NanoHTTPD.Response.Status;
 
 import android.content.Context;
-import android.content.Intent;
 
 import java.io.InputStream;
 
 import bca.sendit.filetransfer.server.Events;
-import bca.sendit.filetransfer.server.Request;
+import bca.sendit.filetransfer.server.request.Request;
 import bca.sendit.filetransfer.server.paths.ResponseView;
 import bca.sendit.filetransfer.server.AssetsHandler;
 

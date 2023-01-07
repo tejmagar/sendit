@@ -2,12 +2,12 @@ package bca.sendit.filetransfer;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.core.app.ActivityCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.fragment.app.Fragment;
+import androidx.viewpager2.widget.ViewPager2;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -15,67 +15,43 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.tabs.TabLayout;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import bca.sendit.filetransfer.adapters.DevicesAdapter;
-import bca.sendit.filetransfer.server.Configuration;
+import bca.sendit.filetransfer.adapters.ViewPagerAdapter;
 import bca.sendit.filetransfer.server.Events;
 import bca.sendit.filetransfer.server.auths.AuthToken;
 import bca.sendit.filetransfer.server.auths.Auths;
-import bca.sendit.filetransfer.server.paths.Path;
-import bca.sendit.filetransfer.server.paths.PathMatcher;
-import bca.sendit.filetransfer.server.HttpServer;
-import bca.sendit.filetransfer.server.views.HomeView;
-import bca.sendit.filetransfer.server.views.PhotosApiView;
-import bca.sendit.filetransfer.server.views.VideosApiView;
+import bca.sendit.filetransfer.service.WebService;
+import bca.sendit.filetransfer.ui.tabs.DevicesFragment;
+import bca.sendit.filetransfer.ui.tabs.DownloadsFragment;
+import bca.sendit.filetransfer.ui.tabs.HomeFragment;
+import bca.sendit.filetransfer.ui.tabs.SettingsFragment;
 
 public class MainActivity extends AppCompatActivity {
 
+    private SwitchCompat runSwitch;
+    private ViewPager2 contentViewPager;
+    private TabLayout tabLayout;
     AlertDialog requestAccessDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         App.setToolbarTransparent(this, getSupportActionBar());
-
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-
-        // For now set false to ignore onboard
-        boolean isFirstLaunch = sharedPreferences.getBoolean("first_launch", false);
-
-        if (isFirstLaunch) {
-            startActivity(new Intent(this, OnBoardActivity.class));
-            finish();
-            return;
-        }
-
-
+        onBoardIfFirstLaunch();
         setContentView(R.layout.activity_main);
 
-        watchAuthDevices();
-
-        List<Path> paths = new ArrayList<>();
-        paths.add(new Path("/", new HomeView()));
-        paths.add(new Path("/api/photos/", new PhotosApiView()));
-        paths.add(new Path("/api/videos/", new VideosApiView()));
-        paths.add(new Path("/test/", new HomeView()));
-
-        PathMatcher pathMatcher = new PathMatcher(paths);
-        try {
-            Configuration configuration = new Configuration();
-            configuration.isPrivateMode = true;
-            HttpServer httpServer = new HttpServer(this, configuration, pathMatcher, 8080);
-            httpServer.start();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+        initViewPager();
+        initMenuTabs();
 
         ActivityCompat.requestPermissions(this, new String[]{
                 Manifest.permission.READ_EXTERNAL_STORAGE
@@ -87,22 +63,129 @@ public class MainActivity extends AppCompatActivity {
         registerReceiver(serverEventsReceiver, intentFilter);
     }
 
-    @SuppressLint("NotifyDataSetChanged")
-    private void watchAuthDevices() {
-        // Prepare recycler view
-        List<AuthToken> authTokenList = new ArrayList<>();
-        RecyclerView authsDeviceView = findViewById(R.id.auths_device_recycler_view);
-        authsDeviceView.setLayoutManager(new LinearLayoutManager(this));
-        DevicesAdapter devicesAdapter = new DevicesAdapter(this, authTokenList);
-        authsDeviceView.setAdapter(devicesAdapter);
+    private void onBoardIfFirstLaunch() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
-        DbManager.get(this).authsTokenDao().getTokens().observe(this, authTokens -> {
-//            authTokenList.clear();
-//            authTokenList.addAll(authTokens);
-//            devicesAdapter.notifyDataSetChanged();
+        // For now set false to ignore onboard
+        boolean isFirstLaunch = sharedPreferences.getBoolean("first_launch", true);
+
+        if (isFirstLaunch) {
+            startActivity(new Intent(this, OnBoardActivity.class));
+            finish();
+        }
+    }
+
+    /**
+     * Sets title in current activity with args from Fragment. If no title specified, app name is
+     * used as title
+     *
+     * @param fragment Fragment
+     */
+    private void setTitle(Fragment fragment) {
+        String defaultTitle = getString(R.string.app_name);
+        setTitle(defaultTitle);
+
+        if (fragment.getArguments() == null) {
+            return;
+        }
+
+        String pageTitle = fragment.getArguments().getString("title");
+        if (pageTitle != null) {
+            setTitle(pageTitle);
+        }
+    }
+
+    private void selectTab(int position) {
+        // First get Tab from TabLayout
+        TabLayout.Tab tab = tabLayout.getTabAt(position);
+        tabLayout.selectTab(tab);
+    }
+
+    private void setFragmentTitle(Fragment fragment, String title) {
+        Bundle bundle = new Bundle();
+        bundle.putString("title", title);
+        fragment.setArguments(bundle);
+    }
+
+    /**
+     * Run menu switch will be hidden if position is 0
+     * @param position index
+     */
+    private void setRunMenuVisibility(int position) {
+        if (runSwitch != null) {
+            runSwitch.setVisibility((position == 0) ? View.VISIBLE : View.GONE);
+        }
+    }
+
+    private void initViewPager() {
+        List<Fragment> pages = new ArrayList<>();
+
+        Fragment homePage = new HomeFragment();
+        setFragmentTitle(homePage, getString(R.string.app_name));
+
+        // Downloads Tab
+        Fragment downloadsPage = new DownloadsFragment();
+        setFragmentTitle(downloadsPage, "Downloads");
+
+        // Devices Tab
+        Fragment devicesPage = new DevicesFragment();
+        setFragmentTitle(devicesPage, "Devices");
+
+        // Settings Tab
+        Fragment settingsPage = new SettingsFragment();
+        setFragmentTitle(settingsPage, "Settings");
+
+        pages.add(homePage);
+        pages.add(downloadsPage);
+        pages.add(devicesPage);
+        pages.add(settingsPage);
+
+        contentViewPager = findViewById(R.id.content_view_pager);
+        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(pages, getSupportFragmentManager(),
+                getLifecycle());
+        contentViewPager.setAdapter(viewPagerAdapter);
+        contentViewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
+                selectTab(position);
+                setTitle(pages.get(position));
+                setRunMenuVisibility(position);
+            }
         });
     }
 
+    private void initMenuTabs() {
+        tabLayout = findViewById(R.id.menuTabs);
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                contentViewPager.setCurrentItem(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+    }
+
+    /**
+     * Send broadcast event to WebServer
+     * @param authToken token
+     * @param isAllowed permissionAllowed
+     */
+    private void sendApprovedBroadcast(String authToken, boolean isAllowed) {
+        Intent intent = new Intent(Events.ACTION_REQUEST_RESULT);
+        intent.putExtra(Events.AUTH_TOKEN, authToken);
+        intent.putExtra(Events.REQUEST_RESULT, isAllowed);
+        sendBroadcast(intent);
+    }
 
     private void requestDialog(String ipAddress, String token) {
         // If any previous request dialog exist, cancel it
@@ -113,11 +196,15 @@ public class MainActivity extends AppCompatActivity {
         MaterialAlertDialogBuilder requestDialogBuilder = new MaterialAlertDialogBuilder(MainActivity.this);
         requestDialogBuilder.setTitle(ipAddress + " is requesting...");
         requestDialogBuilder.setMessage("Allow this device to access your shared file?\nID: " + token);
-        requestDialogBuilder.setNegativeButton("Deny", (dialogInterface, i) -> dialogInterface.dismiss());
+        requestDialogBuilder.setNegativeButton("Deny", (dialogInterface, i) -> {
+            dialogInterface.dismiss();
+            sendApprovedBroadcast(token, false);
+        });
         requestDialogBuilder.setPositiveButton("Allow", (dialogInterface, i) ->
                 new Thread(() -> {
                     AuthToken authToken = new AuthToken(token, true);
                     Auths.saveToken(MainActivity.this, authToken);
+                    sendApprovedBroadcast(token, true);
 
                     runOnUiThread(() -> Toast.makeText(getApplicationContext(),
                             "Allowed access to " + ipAddress, Toast.LENGTH_SHORT).show());
@@ -125,6 +212,25 @@ public class MainActivity extends AppCompatActivity {
 
         requestDialogBuilder.setCancelable(false);
         requestAccessDialog = requestDialogBuilder.show();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+
+        MenuItem menuItem = menu.findItem(R.id.run_server);
+        View view = menuItem.getActionView();
+        runSwitch = view.findViewById(R.id.menu_switch);
+
+        runSwitch.setOnClickListener(v -> {
+            Intent intent = new Intent(this, WebService.class);
+            if (runSwitch.isChecked()) {
+                startService(intent);
+            } else {
+                stopService(intent);
+            }
+        });
+        return super.onCreateOptionsMenu(menu);
     }
 
     class ServerEventsReceiver extends BroadcastReceiver {

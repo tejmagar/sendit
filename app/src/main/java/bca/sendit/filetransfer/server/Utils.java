@@ -2,6 +2,8 @@ package bca.sendit.filetransfer.server;
 
 import android.webkit.MimeTypeMap;
 
+import fi.iki.elonen.NanoHTTPD;
+
 
 public class Utils {
     /**

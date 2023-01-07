@@ -1,5 +1,6 @@
 package bca.sendit.filetransfer.server;
 
-public interface OnAttachHandler {
-    void onAttachWebSocket(WebSocketServer webSocketServer);
+public interface OnServerEvent {
+    void onOpenWebSocket(WebSocketServer webSocketServer);
+    void onCloseWebSocket(WebSocketServer webSocketServer);
 }

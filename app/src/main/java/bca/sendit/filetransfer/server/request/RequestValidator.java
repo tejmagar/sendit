@@ -1,4 +1,4 @@
-package bca.sendit.filetransfer.server;
+package bca.sendit.filetransfer.server.request;
 
 
 import android.Manifest;
