@@ -9,105 +9,67 @@
 </head>
 <body>
 <div id="container">
-    <header id="header">
-        <nav>
-            <div class="logo">Send it</div>
-            <div class="search-bar">
-                <div class="circle"></div>
-                <input type="text" class="search" placeholder="search files">
-            </div>
-        </nav>
-    </header>
-    <aside id="sidebar">
-        <div class="menu-grid">
-            <a class="home" href="/">
-                <svg width="36" height="36" viewBox="0 0 44 44" fill="none"
-                     xmlns="http://www.w3.org/2000/svg">
-                    <ellipse cx="22.1556" cy="21.9231" rx="21.636" ry="21.2524"
-                             transform="rotate(-90 22.1556 21.9231)" fill="#87CEEB"/>
-                    <path d="M14.6699 30.6756C14.2787 30.6756 13.9462 30.5409 13.6727 30.2716C13.3985 30.0029 13.2614 29.6763 13.2614 29.292V27.5394L17.0176 24.2648V30.6756H14.6699ZM17.9567 30.6756V26.9859H25.4692V30.6756H17.9567ZM26.4082 30.6756V23.1118L22.3937 19.6066L25.2344 17.1392L29.6949 21.0364C29.8514 21.1747 29.9688 21.3322 30.0471 21.5087C30.1253 21.6858 30.1645 21.8742 30.1645 22.0741V29.292C30.1645 29.6763 30.0274 30.0029 29.7531 30.2716C29.4796 30.5409 29.1471 30.6756 28.7559 30.6756H26.4082ZM13.2614 26.2941V22.0741C13.2614 21.8742 13.3005 21.6821 13.3787 21.4976C13.457 21.3131 13.5744 21.1594 13.7309 21.0364L20.7738 14.9023C20.8991 14.7793 21.044 14.6908 21.2086 14.6367C21.3727 14.5832 21.5407 14.5564 21.7129 14.5564C21.8851 14.5564 22.0535 14.5832 22.2181 14.6367C22.3821 14.6908 22.5268 14.7793 22.652 14.9023L24.5301 16.5396L13.2614 26.2941Z"
-                          fill="white"/>
-                </svg>
-            </a>
-            <a class="photos" href="/photos/">
-                <svg width="36" height="36" viewBox="0 0 44 44" fill="none"
-                     xmlns="http://www.w3.org/2000/svg">
-                    <ellipse cx="21.8438" cy="21.9231" rx="21.636" ry="21.6952"
-                             transform="rotate(-90 21.8438 21.9231)" fill="#87CEEB"/>
-                    <path opacity="0.2"
-                          d="M17.7279 30.3122C18.8298 31.3946 20.3244 32.0027 21.8828 32.0027L20.6051 27.383H17.6663V26.2309H16.8828V29.2628C17.1202 29.6406 17.4031 29.9931 17.7279 30.3122ZM28.5422 17.7656H28.5421H28.5422Z"
-                          stroke="white" stroke-width="10"/>
-                    <path d="M32.4595 21.6135H28.0525C28.8839 20.4971 29.33 19.1488 29.3256 17.7656C29.323 16.0315 28.6206 14.3692 27.3723 13.143C26.1239 11.9168 24.4316 11.2268 22.6662 11.2242C22.4584 11.2242 22.2592 11.3053 22.1122 11.4496C21.9653 11.594 21.8828 11.7897 21.8828 11.9938V16.3227C20.7462 15.506 19.3736 15.0678 17.9654 15.0721C16.2001 15.0746 14.5077 15.7646 13.2594 16.9908C12.0111 18.217 11.3086 19.8794 11.306 21.6135C11.306 21.8176 11.3886 22.0133 11.5355 22.1576C11.6824 22.302 11.8817 22.383 12.0895 22.383H16.4965C15.6651 23.4994 15.219 24.8477 15.2233 26.2309C15.2259 27.965 15.9284 29.6273 17.1767 30.8535C18.425 32.0797 20.1174 32.7697 21.8828 32.7723C22.0905 32.7723 22.2898 32.6912 22.4367 32.5468C22.5837 32.4025 22.6662 32.2068 22.6662 32.0027V27.6738C23.8028 28.4905 25.1754 28.9287 26.5835 28.9244C28.3489 28.9218 30.0413 28.2319 31.2896 27.0057C32.5379 25.7795 33.2403 24.1171 33.2429 22.383C33.2429 22.1789 33.1604 21.9832 33.0135 21.8389C32.8665 21.6945 32.6673 21.6135 32.4595 21.6135ZM23.4497 12.8211C24.6495 13.0066 25.7426 13.6064 26.5325 14.5128C27.3224 15.4191 27.7572 16.5725 27.7587 17.7656C27.7618 18.501 27.5982 19.2278 27.2797 19.8934C26.9613 20.559 26.496 21.1465 25.9176 21.6135H23.4497V12.8211ZM17.9654 16.6112C18.7141 16.6082 19.4541 16.7689 20.1316 17.0817C20.8092 17.3945 21.4074 17.8516 21.8828 18.4197V20.8439H12.9317C13.1205 19.6653 13.7312 18.5916 14.6539 17.8157C15.5766 17.0399 16.7508 16.6128 17.9654 16.6112ZM21.0993 31.1754C19.8995 30.9899 18.8063 30.3901 18.0165 29.4837C17.2266 28.5774 16.7918 27.424 16.7903 26.2309C16.7872 25.4955 16.9508 24.7686 17.2692 24.1031C17.5877 23.4375 18.053 22.85 18.6314 22.383H21.0993V31.1754ZM26.5835 27.3852C25.8349 27.3883 25.0949 27.2276 24.4173 26.9148C23.7397 26.602 23.1416 26.1449 22.6662 25.5768V23.1526H31.6173C31.4284 24.3312 30.8178 25.4049 29.895 26.1808C28.9723 26.9566 27.7981 27.3837 26.5835 27.3852Z"
-                          fill="white"/>
-                </svg>
-            </a>
-            <a class="videos" href="/videos/">
-                <svg width="36" height="36" viewBox="0 0 44 44" fill="none"
-                     xmlns="http://www.w3.org/2000/svg">
-                    <ellipse cx="22.0139" cy="21.9231" rx="21.636" ry="21.6952"
-                             transform="rotate(-90 22.0139 21.9231)" fill="#87CEEB"/>
-                    <path d="M27.7054 20.4591V16.8678C27.7054 16.5956 27.5954 16.3346 27.3995 16.1422C27.2036 15.9498 26.9378 15.8417 26.6608 15.8417H14.1254C13.8484 15.8417 13.5827 15.9498 13.3868 16.1422C13.1909 16.3346 13.0808 16.5956 13.0808 16.8678V27.1287C13.0808 27.4009 13.1909 27.6619 13.3868 27.8543C13.5827 28.0467 13.8484 28.1548 14.1254 28.1548H26.6608C26.9378 28.1548 27.2036 28.0467 27.3995 27.8543C27.5954 27.6619 27.7054 27.4009 27.7054 27.1287V23.5374L31.8839 27.6418V16.3547L27.7054 20.4591Z"
-                          fill="white"/>
-                </svg>
-            </a>
-            <a class="files" href="/files/">
-                <svg width="36" height="36" viewBox="0 0 44 44" fill="none"
-                     xmlns="http://www.w3.org/2000/svg">
-                    <ellipse cx="21.7777" cy="21.9231" rx="21.636" ry="21.2524"
-                             transform="rotate(-90 21.7777 21.9231)" fill="#87CEEB"/>
-                    <path d="M15.8468 30.4779C15.4119 30.4779 15.0397 30.3203 14.7302 30.0053C14.4203 29.6897 14.2653 29.3106 14.2653 28.8678V17.5976H15.8468V28.8678H24.5455V30.4779H15.8468ZM19.01 27.2578C18.5751 27.2578 18.2029 27.1003 17.8934 26.7852C17.5834 26.4697 17.4284 26.0905 17.4284 25.6478V14.3775C17.4284 13.9348 17.5834 13.5556 17.8934 13.2401C18.2029 12.925 18.5751 12.7675 19.01 12.7675H24.5455L29.2902 17.5976V25.6478C29.2902 26.0905 29.1355 26.4697 28.826 26.7852C28.5161 27.1003 28.1436 27.2578 27.7087 27.2578H19.01ZM23.7547 18.4026H27.7087L23.7547 14.3775V18.4026Z"
-                          fill="white"/>
-                </svg>
-            </a>
-            <a class="upload" href="/upload/">
-                <svg width="36" height="36" viewBox="0 0 44 44" fill="none"
-                     xmlns="http://www.w3.org/2000/svg">
-                    <ellipse cx="21.7942" cy="21.9231" rx="21.636" ry="21.2524"
-                             transform="rotate(-90 21.7942 21.9231)" fill="#87CEEB"/>
-                    <path d="M20.4125 29.7532H16.1867C14.7624 29.7532 13.5457 29.2689 12.5366 28.3004C11.5268 27.3319 11.0219 26.1481 11.0219 24.7491C11.0219 23.55 11.3896 22.4815 12.1252 21.5437C12.8608 20.6059 13.8234 20.0064 15.0129 19.745C15.4041 18.3307 16.1867 17.1853 17.3605 16.309C18.5343 15.4327 19.8647 14.9946 21.3515 14.9946C23.1827 14.9946 24.7359 15.6209 26.0111 16.8736C27.287 18.1268 27.925 19.6528 27.925 21.4515C29.0049 21.5745 29.9011 22.0317 30.6135 22.8231C31.3253 23.6152 31.6812 24.5416 31.6812 25.6024C31.6812 26.7554 31.2705 27.7356 30.4492 28.543C29.6272 29.3498 28.6293 29.7532 27.4554 29.7532H22.2906V23.158L23.7931 24.5877L25.1078 23.2963L21.3515 19.6067L17.5953 23.2963L18.91 24.5877L20.4125 23.158V29.7532Z"
-                          fill="white"/>
-                </svg>
-            </a>
-        </div>
+    <main id="main">
+        <p style="text-align: center">Your uploaded files will appear here</p>
 
-    </aside>
-    <main id="main"></main>
+        <div id="filesArea"></div>
+    </main>
 </div>
 
+<script src="/js/script.js"></script>
+
 <script>
-function getCookie(cname) {
-  let name = cname + "=";
-  let decodedCookie = decodeURIComponent(document.cookie);
-  let ca = decodedCookie.split(';');
-  for(let i = 0; i <ca.length; i++) {
-    let c = ca[i];
-    while (c.charAt(0) == ' ') {
-     c = c.substring(1);
+    // Render common components
+    initView(document.querySelector("#container"));
+
+    const authToken = getCookie('Authorization: Token');
+    if (authToken === null) {
+        console.error("No auth token is present");
     }
-    if (c.indexOf(name) == 0) {
-      return c.substring(name.length, c.length);
+
+    console.debug("AuthToken", authToken);
+
+    let filesArea = document.querySelector("#filesArea");
+
+    fetchUploads().then(response => response.json())
+        .then(data => {
+            console.debug(data)
+
+            for (let i = 0; i < data.length; i++) {
+                const details = data[i];
+                filesArea.innerHTML += createFileUploadItem(details)
+            }
+
+        })
+        .catch(error => {
+            console.error(error);
+        });
+
+    function handleEvent(data) {
+        if (data.action === "action_add_file") {
+            filesArea.innerHTML += createFileUploadItem(data);
+        } else if (data.action === "action_remove_file") {
+            const uri = data.uri;
+            const fileNode = document.querySelector(`[data-uri="${uri}"]`);
+            filesArea.removeChild(fileNode);
+        }
     }
-  }
-  return "";
-}
 
-    const socket = new WebSocket(`ws://192.168.1.33:8080/websocket/${getCookie('Authorization: Token')}/`);
-let i=0;
-socket.onopen = () => {
-  console.log("WebSocket connection opened");
+    const socket = new WebSocket(`ws://${getHost()}/websocket/${authToken}/`);
 
-  // Send a message to the server
-  socket.send("Hello from the client");
-};
+    socket.onopen = () => {
+        console.log("WebSocket connection opened");
+    };
 
-socket.onmessage = (event) => {
- i= i+1;
-  console.log("Received message from server:", event.data + " " +i);
-};
+    socket.onmessage = (event) => {
+        console.debug(event.data);
+        const data = JSON.parse(event.data);
+        handleEvent(data);
+    };
 
-socket.onclose = () => {
-  console.log("WebSocket connection closed");
-};
+    socket.onclose = () => {
+        console.log("WebSocket connection closed");
+    };
 
 
 </script>

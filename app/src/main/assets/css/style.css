@@ -1,14 +1,29 @@
-@import url('https://fonts.googleapis.com/css2?family=Secular+One&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+
+:root {
+    --color-primary: #0A3F8B;
+    --color-secondary: #1474c6;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    margin: 36px 100px;
+    padding: 0;
+}
+
 #header {
     grid-area: header;
     display: flex;
     padding-top: 8px;
     padding-bottom: 8px;
 }
-*{
+
+* {
     margin: 0;
     box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
 }
+
 #sidebar {
     grid-area: sidebar;
 }
@@ -28,49 +43,66 @@
     grid-template-columns: auto 1fr;
 }
 
-
-body{
-    font-family: 'Secular One', sans-serif;
-    margin: 36px 100px;
-    padding: 0;
-}
-.logo{
+.logo {
     font-size: 24px;
     font-weight: 500;
 }
-nav{
+
+#filesArea {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-flow: column;
+    padding: 8px;
+}
+
+.file-item {
+    width: 500px;
+    max-width: 90vw;
+    margin-top: 8px;
+    padding: 2px 8px;
+    border-radius: 8px;
+    background-color: #222222;
+    color: white;
+}
+
+nav {
     display: flex;
     justify-content: space-between;
     width: 100%;
 }
-.nav-buttons{
+
+.nav-buttons {
     display: flex;
     align-items: center;
 }
-.upload-btn{
+
+.upload-btn {
     display: flex;
     align-items: center;
 }
-.search-bar{
+
+.search-bar {
     display: flex;
     align-items: center;
 }
-.search-bar input{
+
+.search-bar input {
     width: 300px;
     height: 32px;
+    padding: 8px;
     border-radius: 14px;
     outline: none;
-    border: none;
-    background: #87CEEB;
+    border: 2px solid var(--color-secondary);;
+    font-size: 14px;
     margin-left: 35px;
 }
 
-.search-bar input::placeholder{
-    color: white;
+.search-bar input::placeholder {
     text-align: center;
 }
-.search-bar input:focus{
-    color: white;
+
+.search-bar input:focus {
     text-align: center;
 }
 
@@ -78,19 +110,24 @@ nav{
 .home {
     grid-area: home;
 }
+
 .photos {
     grid-area: photos;
 }
+
 .videos {
     grid-area: videos;
 }
+
 .files {
     grid-area: files;
 }
+
 .upload {
     grid-area: upload;
 }
-.menu-grid{
+
+.menu-grid {
     display: grid;
     grid-template-areas:
         "home"
@@ -98,35 +135,36 @@ nav{
         "videos"
         "files"
         "upload";
-    background-color: #B3E9FF;
+    background-color: var(--color-primary);
     margin-top: 60px;
     border-radius: 14px;
     padding: 8px 8px;
 }
 
-
-
-
 @media screen and (max-width: 720px) {
-    #header{
-       margin: 0 5px;
+    #header {
+        margin: 0 5px;
     }
-    .circle{
+
+    .circle {
         width: 40px;
         height: 40px;
         border-radius: 100%;
         background-color: #87CEEB;
         border: none;
     }
-    body{
+
+    body {
         margin: 0;
         padding: 0;
     }
-    .search-bar{
+
+    .search-bar {
         width: 100%;
         justify-content: space-between;
         margin: 8px;
     }
+
     #container {
         grid-template-areas:
             "header"
@@ -134,19 +172,21 @@ nav{
             "sidebar";
         grid-template-columns: 1fr;
     }
-    .logo{
+
+    .logo {
         display: none;
     }
 
-    .search-bar{
+    .search-bar {
         max-width: 90%;
     }
 
     .search-bar input {
         max-width: 80%;
     }
+
     #sidebar {
-        margin: 0 auto ;
+        margin: 0 auto;
     }
 
 
@@ -158,12 +198,12 @@ nav{
     }
 
 
-.menu-grid{
-    width: max-content;
-    grid-template-areas: "home photos videos files upload";
-    padding: 3px;
-    margin-top: 0;
-    margin-bottom: 16px;
-}
+    .menu-grid {
+        width: max-content;
+        grid-template-areas: "home photos videos files upload";
+        padding: 3px;
+        margin-top: 0;
+        margin-bottom: 16px;
+    }
 
 }
