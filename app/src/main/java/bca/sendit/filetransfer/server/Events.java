@@ -9,9 +9,13 @@ public class Events {
 
     public static final String ACTION_REQUEST_ALLOW = "action_request_allow";
     public static final String ACTION_REQUEST_RESULT = "action_request_result";
+    public static final String ACTION_ADD_FILE = "action_add_file";
+    public static final String ACTION_REMOVE_FILE = "action_remove_file";
+    public static final String ACTION_PERMISSION = "action_request_permission";
     public static final String AUTH_TOKEN = "auth_token";
     public static final String REMOTE_IP_ADDRESS = "remote_ip_address";
     public static final String REQUEST_RESULT = "request_result";
+    public static final String REQUEST_FILE = "request_file";
 
 
     /**

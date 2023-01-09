@@ -5,10 +5,12 @@ import android.content.Context;
 import java.util.UUID;
 
 import bca.sendit.filetransfer.DbManager;
+import bca.sendit.filetransfer.server.WebSocketServer;
 
 public class Auths {
     /**
      * Generates new token with random UUID
+     *
      * @return token
      */
     public static String generateToken() {
@@ -18,7 +20,8 @@ public class Auths {
 
     /**
      * Saves auth token to the database.
-     * @param context context
+     *
+     * @param context   context
      * @param authToken AuthToken
      */
     public static void saveToken(Context context, AuthToken authToken) {
@@ -33,8 +36,9 @@ public class Auths {
 
     /**
      * Returns token if exist
+     *
      * @param context Context
-     * @param token Token
+     * @param token   Token
      * @return AuthToken
      */
     public static AuthToken getToken(Context context, String token) {
@@ -43,7 +47,8 @@ public class Auths {
 
     /**
      * Delete token from the database
-     * @param context Context
+     *
+     * @param context   Context
      * @param authToken AuthToken
      */
     public static void deleteToken(Context context, AuthToken authToken) {
@@ -59,4 +64,23 @@ public class Auths {
         AuthToken authToken = getToken(context, token);
         return authToken != null;
     }
+
+    /**
+     * Hardcoded
+     * @param uri String
+     * @return token
+     */
+    public static String getTokenFromUri(String uri) {
+        String token = uri.replaceFirst("/websocket/", "");
+        token = token.replace("/", "");
+        return token;
+    }
+
+    public static boolean isAuthenticated(Context context, WebSocketServer webSocketServer) {
+        String uri = webSocketServer.getHandshakeRequest().getUri();
+        String authToken = getTokenFromUri(uri);
+
+        return isAuthenticated(context, authToken);
+    }
+
 }

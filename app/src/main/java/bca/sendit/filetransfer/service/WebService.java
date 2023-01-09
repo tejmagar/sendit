@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.Uri;
 import android.os.IBinder;
 import android.util.Log;
 
@@ -22,8 +23,11 @@ import bca.sendit.filetransfer.server.Events;
 import bca.sendit.filetransfer.server.HttpServer;
 import bca.sendit.filetransfer.server.OnServerEvent;
 import bca.sendit.filetransfer.server.SingletonHttpServer;
+import bca.sendit.filetransfer.server.Utils;
 import bca.sendit.filetransfer.server.WebSocketServer;
+import bca.sendit.filetransfer.server.auths.Auths;
 import bca.sendit.filetransfer.server.files.FileUploadSession;
+import bca.sendit.filetransfer.server.files.OnFilesChangeListener;
 import bca.sendit.filetransfer.server.paths.Path;
 import bca.sendit.filetransfer.server.paths.PathMatcher;
 import bca.sendit.filetransfer.server.views.FileDownloadView;
@@ -39,7 +43,7 @@ public class WebService extends Service {
 
     private final List<WebSocketServer> webSocketServers = new ArrayList<>();
     private ServerEventsReceiver eventsReceiver;
-    
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -72,7 +76,7 @@ public class WebService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "onStartCommand");
 
-        boolean isServePrivate = intent.getBooleanExtra(Configuration.SERVE_MODE_PRIVATE, false);
+        boolean isServePrivate = intent.getBooleanExtra(Configuration.SERVE_MODE_PRIVATE, true);
         httpServer = createHttpServer(isServePrivate);
         httpServer.attachEventListener(new OnServerEvent() {
             @Override
@@ -93,26 +97,49 @@ public class WebService extends Service {
             stopService(intent);
         }
 
-        FileUploadSession.setCallback(path -> handleUpload());
-        
+        FileUploadSession.setCallback(new OnFilesChangeListener() {
+            @Override
+            public void onAllowed(Uri uri) {
+                handleUpload(uri, Events.ACTION_ADD_FILE);
+            }
+
+            @Override
+            public void onDeny(Uri uri) {
+                handleUpload(uri, Events.ACTION_REMOVE_FILE);
+            }
+
+            @Override
+            public void onChange() {
+            }
+        });
+
         eventsReceiver = new ServerEventsReceiver();
         IntentFilter intentFilter = new IntentFilter(Events.ACTION_REQUEST_RESULT);
         registerReceiver(eventsReceiver, intentFilter);
         return START_STICKY;
     }
 
-    private void handleUpload() {
+    private void handleUpload(Uri uri, String action) {
         new Thread(() -> {
             for (WebSocketServer webSocketServer : webSocketServers) {
-                if (webSocketServer.isOpen()) {
-                    // Send message through websocket to active clients
-                    try {
-                        JSONObject message = new JSONObject();
-                        message.put("type", "uploads");
-                        webSocketServer.send(message.toString());
-                    } catch (IOException | JSONException e) {
-                        e.printStackTrace();
+                // Send message through websocket to active and authenticated clients
+
+                if (webSocketServer.isOpen() && Auths.isAuthenticated(getApplicationContext(), webSocketServer)) {
+                    Utils.UriFileDetails fileDetails = Utils.getFileDetails(getApplicationContext(), uri);
+                    if (fileDetails != null) {
+                        try {
+                            JSONObject message = new JSONObject();
+                            message.put("action", action);
+                            message.put("uri", fileDetails.getUri());
+                            message.put("filename", fileDetails.getFilename());
+                            message.put("size", fileDetails.getSize());
+                            webSocketServer.send(message.toString());
+                        } catch (IOException | JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
+                } else {
+                    webSocketServers.remove(webSocketServer);
                 }
             }
         }).start();
@@ -128,12 +155,14 @@ public class WebService extends Service {
                     // Send message through websocket to active clients
                     try {
                         JSONObject message = new JSONObject();
-                        message.put("type", "permission");
+                        message.put("action", Events.ACTION_PERMISSION);
                         message.put("value", isAllowed);
                         webSocketServer.send(message.toString());
                     } catch (IOException | JSONException e) {
                         e.printStackTrace();
                     }
+                } else {
+                    webSocketServers.remove(webSocketServer);
                 }
             }
         }).start();

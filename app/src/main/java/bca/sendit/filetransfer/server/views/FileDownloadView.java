@@ -1,15 +1,19 @@
 package bca.sendit.filetransfer.server.views;
 
 import android.content.Context;
+import android.net.Uri;
 import android.util.Log;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.List;
 import java.util.Map;
 
+import bca.sendit.filetransfer.server.Configuration;
 import bca.sendit.filetransfer.server.ResponseTemplate;
 import bca.sendit.filetransfer.server.Utils;
 import bca.sendit.filetransfer.server.files.FileUploadSession;
@@ -21,41 +25,49 @@ public class FileDownloadView extends ResponseView {
 
     public static final String TAG = "FileDownloadView";
 
-    private String getQueryPath(Map<String, List<String>> parameters) {
-        List<String> filePathQuery = parameters.get("file_path");
+    /*
+     * Resources can be accessed using file path and with content Uri.
+     * Check path for both methods
+     */
+    private String getQueryPath(Map<String, List<String>> parameters, String query) {
+        List<String> pathQuery = parameters.get(query);
 
-        if (filePathQuery != null && filePathQuery.size() > 0) {
-            return filePathQuery.get(0);
+        if (pathQuery != null && pathQuery.size() > 0) {
+            return pathQuery.get(0);
         }
 
         return null;
     }
 
+    public boolean hasAccessPermission(Configuration configuration, Uri fileUri) {
+        return fileUri != null && (!configuration.isPrivateMode || FileUploadSession.isAllowed(fileUri));
+    }
+
     @Override
     public NanoHTTPD.Response getResponse(Context context, Request request) {
         if (request.isAuthenticated()) {
-            String filePath = getQueryPath(request.getSession().getParameters());
-            Log.d(TAG, "Trying to access resource " + filePath);
+            Map<String, List<String>> parameters = request.getSession().getParameters();
+            String filePath = getQueryPath(parameters, "file_path");
 
-            if (filePath != null && (!request.getConfiguration().isPrivateMode
-                    || FileUploadSession.isAllowed(filePath))) {
-                File file = new File(filePath);
+            // Handle file_path query at first
+            // Files cannot be be served in private mode
+            if (filePath != null && !request.getConfiguration().isPrivateMode) {
+                Log.d(TAG, "Trying to access resource " + filePath);
+                return ResponseTemplate.serveFile(context, filePath);
+            }
 
-                // If file exist available it to client
-                if (file.exists()) {
-                    try {
-                        InputStream inputStream = new FileInputStream(file);
-                        return NanoHTTPD.newChunkedResponse(NanoHTTPD.Response.Status.OK,
-                                Utils.getMimeType(filePath), inputStream);
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    return ResponseTemplate.fileNotFound(context);
+            // Handle content uri
+            String contentUri = getQueryPath(parameters, "uri");
+
+            if (contentUri != null) {
+                Uri fileUri = Uri.parse(contentUri);
+
+                if (fileUri != null && hasAccessPermission(request.getConfiguration(), fileUri)) {
+                    return ResponseTemplate.serveUriFile(context, fileUri);
                 }
             }
         }
 
-        return ResponseTemplate.forbidden(context, "Access denied");
+        return ResponseTemplate.forbidden("Access denied");
     }
 }

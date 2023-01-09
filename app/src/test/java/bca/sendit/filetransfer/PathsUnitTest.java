@@ -5,11 +5,13 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 import android.app.Instrumentation;
+import android.net.Uri;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import bca.sendit.filetransfer.server.AssetsHandler;
+import bca.sendit.filetransfer.server.files.FileUploadSession;
 import bca.sendit.filetransfer.server.paths.Path;
 import bca.sendit.filetransfer.server.paths.PathMatcher;
 import bca.sendit.filetransfer.server.Utils;

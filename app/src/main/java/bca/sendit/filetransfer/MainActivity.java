@@ -1,5 +1,7 @@
 package bca.sendit.filetransfer;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
@@ -13,14 +15,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
@@ -30,6 +35,7 @@ import bca.sendit.filetransfer.adapters.ViewPagerAdapter;
 import bca.sendit.filetransfer.server.Events;
 import bca.sendit.filetransfer.server.auths.AuthToken;
 import bca.sendit.filetransfer.server.auths.Auths;
+import bca.sendit.filetransfer.server.files.FileUploadSession;
 import bca.sendit.filetransfer.service.WebService;
 import bca.sendit.filetransfer.ui.tabs.DevicesFragment;
 import bca.sendit.filetransfer.ui.tabs.DownloadsFragment;
@@ -38,10 +44,15 @@ import bca.sendit.filetransfer.ui.tabs.SettingsFragment;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final String TAG = "MainActivity";
+
     private SwitchCompat runSwitch;
     private ViewPager2 contentViewPager;
     private TabLayout tabLayout;
+    private FloatingActionButton fabUpload;
+
     AlertDialog requestAccessDialog;
+    ActivityResultLauncher<String> activityResultLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +64,20 @@ public class MainActivity extends AppCompatActivity {
         initViewPager();
         initMenuTabs();
 
+
+        fabUpload = findViewById(R.id.fab_upload);
+        fabUpload.setOnClickListener(v -> selectFiles());
+
+        activityResultLauncher = registerForActivityResult(new ActivityResultContracts.GetMultipleContents(), result -> {
+            for (Uri uri : result) {
+                FileUploadSession.allowFile(uri);
+                Log.d(TAG, uri.toString());
+            }
+
+            Log.d(TAG, "Files selected: " + result.size());
+        });
+
+
         ActivityCompat.requestPermissions(this, new String[]{
                 Manifest.permission.READ_EXTERNAL_STORAGE
         }, 0);
@@ -61,6 +86,14 @@ public class MainActivity extends AppCompatActivity {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(Events.ACTION_REQUEST_ALLOW);
         registerReceiver(serverEventsReceiver, intentFilter);
+    }
+
+    private void selectFiles() {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("*/*");
+        intent.addCategory(Intent.CATEGORY_DEFAULT);
+        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+        activityResultLauncher.launch("*/*");
     }
 
     private void onBoardIfFirstLaunch() {
@@ -111,10 +144,17 @@ public class MainActivity extends AppCompatActivity {
      * Run menu switch will be hidden if position is 0
      * @param position index
      */
-    private void setRunMenuVisibility(int position) {
+    private void setMenuAndFabVisibility(int position) {
         if (runSwitch != null) {
             runSwitch.setVisibility((position == 0) ? View.VISIBLE : View.GONE);
         }
+
+        if (position == 0) {
+            fabUpload.show();
+        } else {
+            fabUpload.hide();
+        }
+
     }
 
     private void initViewPager() {
@@ -150,7 +190,7 @@ public class MainActivity extends AppCompatActivity {
                 super.onPageSelected(position);
                 selectTab(position);
                 setTitle(pages.get(position));
-                setRunMenuVisibility(position);
+                setMenuAndFabVisibility(position);
             }
         });
     }

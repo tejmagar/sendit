@@ -102,6 +102,8 @@ public class HttpServer extends NanoWSD {
                 cookieHandler.unloadQueue(response);
             }
 
+            // Add this header to allow from any remote host to send request
+            response.addHeader("Access-Control-Allow-Origin", "*");
             return response;
 
         } catch (Exception e) {
