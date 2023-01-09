@@ -11,7 +11,7 @@
 <div id="container">
     <main id="main">
         <p style="text-align: center">Your uploaded files will appear here</p>
-
+        <div id="message"></div>
         <div id="filesArea"></div>
     </main>
 </div>
@@ -50,7 +50,7 @@
             filesArea.innerHTML += createFileUploadItem(data);
         } else if (data.action === "action_remove_file") {
             const uri = data.uri;
-            const fileNode = document.querySelector(`[data-uri="${uri}"]`);
+            const fileNode = document.querySelector(`[data-uri="${uri}"]`)
             filesArea.removeChild(fileNode);
         }
     }
@@ -69,6 +69,7 @@
 
     socket.onclose = () => {
         console.log("WebSocket connection closed");
+        document.querySelector("#message").innerHTML += "<a style='display: block; text-align: center' href='/'>Refresh</a>";
     };
 
 
