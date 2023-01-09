@@ -237,7 +237,9 @@ public class MainActivity extends AppCompatActivity {
         requestDialogBuilder.setTitle(ipAddress + " is requesting...");
         requestDialogBuilder.setMessage("Allow this device to access your shared file?\nID: " + token);
         requestDialogBuilder.setNegativeButton("Deny", (dialogInterface, i) -> {
-            dialogInterface.dismiss();
+            if (requestAccessDialog != null && requestAccessDialog.isShowing()) {
+                requestAccessDialog.cancel();
+            }
             sendApprovedBroadcast(token, false);
         });
         requestDialogBuilder.setPositiveButton("Allow", (dialogInterface, i) ->

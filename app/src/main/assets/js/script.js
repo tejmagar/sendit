@@ -1,4 +1,4 @@
-let DEBUG = true;
+let DEBUG = false;
 let DEBUG_HOST_URL = "192.168.1.33:8080";
 
 function getCookie(name) {

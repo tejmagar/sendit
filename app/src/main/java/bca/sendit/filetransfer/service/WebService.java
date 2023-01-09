@@ -139,7 +139,7 @@ public class WebService extends Service {
                         }
                     }
                 } else {
-                    webSocketServers.remove(webSocketServer);
+//                    webSocketServers.remove(webSocketServer);
                 }
             }
         }).start();
@@ -162,7 +162,7 @@ public class WebService extends Service {
                         e.printStackTrace();
                     }
                 } else {
-                    webSocketServers.remove(webSocketServer);
+//                    webSocketServers.remove(webSocketServer);
                 }
             }
         }).start();
