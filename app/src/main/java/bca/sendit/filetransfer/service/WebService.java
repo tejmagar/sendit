@@ -1,5 +1,8 @@
 package bca.sendit.filetransfer.service;
 
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -10,6 +13,7 @@ import android.os.IBinder;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -18,6 +22,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import bca.sendit.filetransfer.R;
 import bca.sendit.filetransfer.server.Configuration;
 import bca.sendit.filetransfer.server.Events;
 import bca.sendit.filetransfer.server.HttpServer;
@@ -72,9 +77,29 @@ public class WebService extends Service {
         return SingletonHttpServer.getInstance().getHttpServer();
     }
 
+    private void createNotificationChannel() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            NotificationChannel notificationChannel = new NotificationChannel(getString(R.string.app_name),
+                    "File server", NotificationManager.IMPORTANCE_LOW);
+            notificationChannel.setSound(null, null);
+            NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            notificationManager.createNotificationChannel(notificationChannel);
+        }
+    }
+
+
+    private Notification buildNotification() {
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, getString(R.string.app_name));
+        builder.setContentTitle(getString(R.string.app_name));
+        builder.setContentText("File server is running...");
+        return builder.build();
+    }
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "onStartCommand");
+        createNotificationChannel();
+        startForeground(1200, buildNotification());
 
         boolean isServePrivate = intent.getBooleanExtra(Configuration.SERVE_MODE_PRIVATE, true);
         httpServer = createHttpServer(isServePrivate);
@@ -138,8 +163,6 @@ public class WebService extends Service {
                             e.printStackTrace();
                         }
                     }
-                } else {
-//                    webSocketServers.remove(webSocketServer);
                 }
             }
         }).start();
@@ -161,8 +184,6 @@ public class WebService extends Service {
                     } catch (IOException | JSONException e) {
                         e.printStackTrace();
                     }
-                } else {
-//                    webSocketServers.remove(webSocketServer);
                 }
             }
         }).start();

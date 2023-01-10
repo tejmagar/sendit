@@ -69,17 +69,17 @@
             app:layout_constraintTop_toBottomOf="@+id/cardView2">
 
             <TextView
-                android:id="@+id/textView4"
+                android:id="@+id/ip_address"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:drawablePadding="8dp"
-                android:text="http://192.168.1.1:8000"
+                tools:text="http://192.168.1.1:8000"
                 app:drawableStartCompat="@drawable/web"
                 app:drawableTint="?attr/colorOnSecondary" />
 
             <ImageView
-                android:id="@+id/imageView3"
+                android:id="@+id/copy_url"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="?attr/selectableItemBackgroundBorderless"

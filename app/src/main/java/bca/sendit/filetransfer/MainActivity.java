@@ -16,6 +16,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -228,6 +229,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void requestDialog(String ipAddress, String token) {
+        if (!getWindow().getDecorView().isShown()) {
+            return;
+        }
         // If any previous request dialog exist, cancel it
         if (requestAccessDialog != null) {
             requestAccessDialog.cancel();
@@ -256,6 +260,23 @@ public class MainActivity extends AppCompatActivity {
         requestAccessDialog = requestDialogBuilder.show();
     }
 
+    private void handleService(boolean start) {
+        Intent intent = new Intent(this, WebService.class);
+
+        if (start) {
+            if (!App.isNotificationRunning(this)) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    startForegroundService(intent);
+                } else {
+                    startService(intent);
+                }
+            }
+        } else {
+            if (App.isNotificationRunning(this)) {
+                stopService(intent);
+            }
+        }
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
@@ -263,15 +284,8 @@ public class MainActivity extends AppCompatActivity {
         MenuItem menuItem = menu.findItem(R.id.run_server);
         View view = menuItem.getActionView();
         runSwitch = view.findViewById(R.id.menu_switch);
-
-        runSwitch.setOnClickListener(v -> {
-            Intent intent = new Intent(this, WebService.class);
-            if (runSwitch.isChecked()) {
-                startService(intent);
-            } else {
-                stopService(intent);
-            }
-        });
+        runSwitch.setChecked(App.isNotificationRunning(this));
+        runSwitch.setOnClickListener(v -> handleService(runSwitch.isChecked()));
         return super.onCreateOptionsMenu(menu);
     }
 
