@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>{{ app_name }} </title>
+
+    <style>
+        body {
+            padding: 0;
+            margin-top: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #333;
+            color: white;
+        }
+
+        * {
+            font-family: monospace;
+        }
+
+        .center-form {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 8px;
+        }
+
+        .upload-btn {
+            border: 1px dashed;
+            width: 400px;
+            max-width: 100%;
+            background-color: transparent;
+            color: white;
+            height: 50px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        #filesList {
+            display: flex;
+            justify-content: center;
+            flex-flow: column;
+            align-items: center;
+        }
+
+        .file-item {
+            display: grid;
+            align-items: center;
+            grid-template-columns: 1fr auto;
+            width: 400px;
+            max-width: 100%;
+            border-radius: 8px 0 0 8px;
+            color: white;
+            margin-bottom: 8px;
+            border-color: white;
+        }
+
+        .filename {
+            white-space: nowrap;
+        }
+
+        .left-area {
+            padding: 10px;
+            background-color: white;
+            color: black;
+            border-radius: 8px 0 0 8px;
+            height: 16px;
+        }
+
+        .download-btn {
+            background-color: #1414ff;
+            border-radius: 0 8px 8px 0;
+            padding: 4px 8px;
+            line-height: 28px;
+            text-decoration: none;
+            color: white;
+            cursor: pointer;
+        }
+
+        .download-btn:hover {
+            background-color: #0909e0;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="center-form">
+        <form action="/upload/" method="post" enctype="multipart/form-data">
+            <input type="file" name="file" id="file" style="display: none" onchange="this.form.submit()">
+            <button type="button" class="upload-btn" onclick="document.querySelector('#file').click()">Upload new file
+            </button>
+        </form>
+    </div>
+
+    <p style="text-align: center">Your uploaded files will appear here</p>
+</header>
+
+<div id="filesList">
+
+</div>
+
+<script>
+    const filesList = document.querySelector("#filesList");
+    const websocket = new WebSocket(`ws://${window.location.host}/ws/`);
+    const json_text = '{{ files }}';
+    const json = JSON.parse(json_text);
+
+    function createItem(data) {
+        console.log(data)
+        return `
+           <div class="file-item">
+                <div class="left-area">
+                    <span class="filename" style="display: block; max-width: 300px; overflow: hidden;">${data['filename']}</span>
+                </div>
+                <a href="/download/?uri=${encodeURIComponent(data['uri'])}" class="download-btn" download>Download</a>
+           </div>
+        `
+    }
+
+    function appendFile(data) {
+        const code = createItem(data);
+        filesList.innerHTML += code
+    }
+
+    function renderFiles() {
+        for (let i = 0; i < json.length; i++) {
+            const data = json[i];
+            appendFile(data);
+            console.debug(data);
+        }
+    }
+
+    websocket.onmessage = (event) => {
+        window.location.reload();
+    }
+
+    websocket.onclose = () => {
+        window.location.reload();
+    }
+
+    renderFiles();
+
+</script>
+</body>
+</html>

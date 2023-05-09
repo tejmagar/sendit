@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Send it</string>
+    <string name="save_to_message">Your downloaded files will be saved to your Downloads folder</string>
+    <string name="online_dot">•</string>
+    <string name="no_device_message">No devices connected</string>
+    <string name="default_port">8080</string>
+    <string name="upload">Upload</string>
+</resources>

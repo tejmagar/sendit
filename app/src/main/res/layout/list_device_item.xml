@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/device_ip_address"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:padding="8dp"
+        tools:text="192.168.1.1" />
+
+    <TextView
+        android:layout_width="32dp"
+        android:layout_height="match_parent"
+        android:height="32dp"
+        android:gravity="center"
+        android:text="@string/online_dot"
+        android:textColor="#4CAF50"
+        android:textStyle="bold" />
+</LinearLayout>
