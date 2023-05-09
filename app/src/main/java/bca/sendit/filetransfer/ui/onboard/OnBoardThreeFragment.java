@@ -11,12 +11,10 @@ import androidx.fragment.app.Fragment;
 
 import bca.sendit.filetransfer.R;
 
-public class NextPageFragment extends Fragment {
+public class OnBoardThreeFragment extends Fragment {
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
-        return LayoutInflater.from(getContext()).inflate(R.layout.onboard_page_two, container,
-                false);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_onboard_three, container, false);
     }
 }

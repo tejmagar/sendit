@@ -15,9 +15,10 @@ import androidx.viewpager2.widget.ViewPager2;
 import java.util.Arrays;
 import java.util.List;
 
-import bca.sendit.filetransfer.ui.onboard.NextPageFragment;
+import bca.sendit.filetransfer.ui.onboard.OnBoardOneFragment;
 import bca.sendit.filetransfer.ui.onboard.OnBoardPagerAdapter;
-import bca.sendit.filetransfer.ui.onboard.WelcomePageFragment;
+import bca.sendit.filetransfer.ui.onboard.OnBoardThreeFragment;
+import bca.sendit.filetransfer.ui.onboard.OnBoardTwoFragment;
 
 public class OnBoardActivity extends AppCompatActivity {
     private List<Fragment> onBoardItems;
@@ -37,8 +38,9 @@ public class OnBoardActivity extends AppCompatActivity {
 
     private List<Fragment> createOnBoardItems() {
         return Arrays.asList(
-                new NextPageFragment(),
-                new WelcomePageFragment()
+                new OnBoardOneFragment(),
+                new OnBoardTwoFragment(),
+                new OnBoardThreeFragment()
         );
     }
 
@@ -51,6 +53,11 @@ public class OnBoardActivity extends AppCompatActivity {
         nextBtn = findViewById(R.id.onboard_next);
 
         nextBtn.setOnClickListener(view -> {
+            if (onBoardPager.getCurrentItem() == onBoardItems.size() - 1){
+                completeOnBoard();
+                return;
+            }
+
             // Page content can be scrolled
             if (onBoardItems.size() > onBoardPager.getCurrentItem()) {
                 onBoardPager.setCurrentItem(onBoardPager.getCurrentItem() + 1);
@@ -76,7 +83,7 @@ public class OnBoardActivity extends AppCompatActivity {
                 backBtn.setVisibility((position == 0) ? View.GONE : View.VISIBLE);
 
                 // Don't show next and skip button for last page
-                nextBtn.setVisibility((position < onBoardItems.size() - 1 ? View.VISIBLE : View.GONE));
+//                nextBtn.setVisibility((position < onBoardItems.size() - 1 ? View.VISIBLE : View.GONE));
                 skipBtn.setVisibility((position < onBoardItems.size() - 1 ? View.VISIBLE : View.GONE));
 
                 super.onPageSelected(position);
