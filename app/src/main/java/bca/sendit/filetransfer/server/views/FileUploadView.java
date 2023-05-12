@@ -10,6 +10,7 @@ import org.apache.commons.io.FileUtils;
 import org.tinyweb.views.View;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,14 +40,7 @@ public class FileUploadView extends View {
 
                 if (fileNames != null && filePath != null) {
                     String fileName = fileNames.get(0);
-
-                    File in = new File(filePath);
-                    File out = new File(Environment.getExternalStorageDirectory() + "/" +
-                            Environment.DIRECTORY_DOWNLOADS, fileName);
-
-                    Log.i(TAG, "Moving file to " + out.getAbsolutePath());
-                    FileUtils.copyFile(in, out);
-
+                    File out = copyFileToDownloads(filePath, fileName);
                     notifyDownload(context, out.getAbsolutePath());
                     return NanoHTTPD.newFixedLengthResponse("File uploaded to " +
                             out.getAbsolutePath() + " . Go to <a href=\"/\">Home</a>");
@@ -58,6 +52,47 @@ public class FileUploadView extends View {
         }
 
         return NanoHTTPD.newFixedLengthResponse("Oops, something went wrong");
+    }
+
+    private File getDownloadsDir() {
+        return new File(Environment.getExternalStorageDirectory() + "/" +
+                Environment.DIRECTORY_DOWNLOADS);
+    }
+
+    /**
+     * Generate unique file name for saving. Android allows to write only files in Downloads folder
+     * without WRITE_EXTERNAL_STORAGE permission. You can't overwrite files which already exists.
+     * @param preferredName your preferred name
+     * @return preferredName
+     */
+
+
+    private String generateFilename(String preferredName) {
+        File file = new File(getDownloadsDir(), preferredName);
+        if (file.exists()) {
+            int extensionIndex = preferredName.lastIndexOf(".");
+
+            if (extensionIndex != -1) {
+                // File has extension. For eg: example.png
+                String filenameWithOutExtension = preferredName.substring(0, extensionIndex);
+                String extension = preferredName.substring(extensionIndex);
+                return filenameWithOutExtension + "-" + System.currentTimeMillis() + extension;
+            } else {
+                // This file don't have extension
+                return preferredName + "-" + System.currentTimeMillis();
+            }
+        }
+
+        return preferredName;
+    }
+
+    private File copyFileToDownloads(String tmpFilePath, String filename) throws IOException {
+        File in = new File(tmpFilePath);
+        String outFilename = generateFilename(filename);
+        File out = new File(getDownloadsDir(), outFilename);
+        Log.i(TAG, "Moving " + in.getAbsolutePath() + " ==> " + out.getAbsolutePath());
+        FileUtils.copyFile(in, out);
+        return out;
     }
 
 
